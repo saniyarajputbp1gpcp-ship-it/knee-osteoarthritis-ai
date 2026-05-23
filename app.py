@@ -5,12 +5,17 @@ import cv2
 import os
 
 app = Flask(__name__)
+import tensorflow as tf
+
+tf.config.set_visible_devices([], 'GPU')
 
 # Load trained model
 model = load_model("improved_model.keras", compile=False)
 
 # Upload folder
-UPLOAD_FOLDER = "static"
+UPLOAD_FOLDER = "static/uploads"
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Class labels
 classes = {
@@ -80,7 +85,7 @@ def predict():
     img = np.reshape(img, (1, 224, 224, 3))
 
     # Predict
-    prediction = model.predict(img)
+    prediction = model.predict(img, verbose=0)
 
     predicted_class = np.argmax(prediction)
 
