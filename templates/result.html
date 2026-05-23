@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prediction Result</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins',sans-serif;
+        }
+
+        body{
+
+            background:
+            linear-gradient(rgba(0,0,0,0.78), rgba(0,0,0,0.85)),
+            url('https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=1974&auto=format&fit=crop');
+
+            background-size:cover;
+            background-position:center;
+
+            min-height:100vh;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            padding:40px;
+
+            color:white;
+        }
+
+        .container{
+
+            width:100%;
+            max-width:1200px;
+
+            background:rgba(255,255,255,0.08);
+
+            border-radius:30px;
+
+            backdrop-filter:blur(14px);
+
+            padding:40px;
+
+            box-shadow:0 0 40px rgba(0,0,0,0.5);
+
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:40px;
+
+            animation:fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn{
+
+            from{
+                opacity:0;
+                transform:translateY(20px);
+            }
+
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .image-section img{
+
+            width:100%;
+            border-radius:22px;
+
+            border:3px solid rgba(255,255,255,0.1);
+
+            box-shadow:0 0 25px rgba(0,0,0,0.5);
+        }
+
+        .badge{
+
+            display:inline-block;
+
+            padding:10px 18px;
+
+            border-radius:12px;
+
+            background:rgba(0,212,255,0.15);
+
+            color:#00d4ff;
+
+            margin-bottom:25px;
+        }
+
+        .result-section h1{
+
+            font-size:45px;
+            margin-bottom:25px;
+        }
+
+        .prediction{
+
+            font-size:36px;
+            font-weight:700;
+
+            margin-bottom:20px;
+        }
+
+        .confidence{
+
+            font-size:22px;
+            margin-bottom:25px;
+
+            color:#d8d8d8;
+        }
+
+        .report-box{
+
+            background:rgba(255,255,255,0.07);
+
+            padding:25px;
+
+            border-radius:18px;
+
+            margin-top:20px;
+
+            line-height:1.9;
+
+            color:#d8d8d8;
+        }
+
+        .gauge-container{
+
+            margin-top:30px;
+            margin-bottom:30px;
+        }
+
+        .gauge-label{
+
+            margin-bottom:10px;
+            font-size:18px;
+        }
+
+        .gauge{
+
+            width:100%;
+            height:18px;
+
+            background:rgba(255,255,255,0.1);
+
+            border-radius:20px;
+
+            overflow:hidden;
+        }
+
+        .gauge-fill{
+
+            height:100%;
+            width:{{ confidence }}%;
+
+            background:linear-gradient(to right,#00ff87,#60efff,#0061ff);
+
+            border-radius:20px;
+
+            animation:loadGauge 2s ease;
+        }
+
+        @keyframes loadGauge{
+
+            from{
+                width:0%;
+            }
+
+            to{
+                width:{{ confidence }}%;
+            }
+        }
+
+        .button-group{
+
+            margin-top:35px;
+
+            display:flex;
+            gap:20px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+
+            text-decoration:none;
+
+            padding:14px 24px;
+
+            border-radius:14px;
+
+            color:white;
+
+            background:linear-gradient(to right,#00d4ff,#0072ff);
+
+            transition:0.3s;
+        }
+
+        .btn:hover{
+
+            transform:scale(1.05);
+
+            box-shadow:0 0 20px rgba(0,212,255,0.5);
+        }
+
+        .severity-normal{
+            color:#00ff87;
+        }
+
+        .severity-mild{
+            color:#ffe600;
+        }
+
+        .severity-moderate{
+            color:#ff9900;
+        }
+
+        .severity-severe{
+            color:#ff3c3c;
+        }
+
+        @media(max-width:950px){
+
+            .container{
+
+                grid-template-columns:1fr;
+            }
+
+            .result-section h1{
+
+                font-size:35px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="image-section">
+
+            <img src="/{{ image_path }}">
+
+        </div>
+
+        <div class="result-section">
+
+            <div class="badge">
+
+                AI Medical Imaging Report
+
+            </div>
+
+            <h1>
+                Prediction Result
+            </h1>
+
+            {% if prediction == 'Normal' %}
+                <div class="prediction severity-normal">
+                    {{ prediction }}
+                </div>
+
+            {% elif prediction == 'Mild' %}
+                <div class="prediction severity-mild">
+                    {{ prediction }}
+                </div>
+
+            {% elif prediction == 'Moderate' %}
+                <div class="prediction severity-moderate">
+                    {{ prediction }}
+                </div>
+
+            {% else %}
+                <div class="prediction severity-severe">
+                    {{ prediction }}
+                </div>
+            {% endif %}
+
+            <div class="confidence">
+
+                Confidence Score: {{ confidence }}%
+
+            </div>
+
+            <div class="gauge-container">
+
+                <div class="gauge-label">
+
+                    AI Confidence Meter
+
+                </div>
+
+                <div class="gauge">
+
+                    <div class="gauge-fill"></div>
+
+                </div>
+
+            </div>
+
+            <div class="report-box">
+                <br>
+
+<div class="report-box">
+
+    <strong>Patient Details</strong>
+
+    <br><br>
+
+    Name: {{ name }}
+
+    <br><br>
+
+    Age: {{ age }}
+
+    <br><br>
+
+    Gender: {{ gender }}
+
+    <br><br>
+
+    BMI: {{ bmi }}
+
+    <br><br>
+
+    Symptoms: {{ symptoms }}
+
+</div>
+
+                <strong>AI Analysis Summary:</strong>
+
+                The uploaded knee X-ray image was analyzed using a CNN and MobileNetV2 deep learning model trained on osteoarthritis datasets.
+
+<br><br>
+
+The prediction is generated primarily from radiographic knee joint features visible in the X-ray image including joint spacing, bone structure and osteoarthritic patterns.
+
+<br><br>
+
+Patient details such as age, gender and BMI are displayed only for clinical reference and are currently not used by the AI model for prediction.
+            </div>
+
+            <div class="button-group">
+
+                <a href="/" class="btn">
+                    ← Back To Home
+                </a>
+
+                <a href="/" class="btn">
+                    Analyze Another X-Ray
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
